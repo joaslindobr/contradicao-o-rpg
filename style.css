@@ -1,0 +1,1250 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #070101;
+  --red: #d91c1c;
+  --red-dark: #6e0b0b;
+  --white: #f5f2f0;
+  --muted: #a68f8f;
+  --blue: #2e8bff;
+  --hp: #e62222;
+  --pa: #2e8bff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* FUNDO INSPIRADO NA IMAGEM DE TEXTURA VERMELHA E PRETA */
+.background-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-color: #070101;
+  background-image:
+    radial-gradient(circle at 8% 15%, rgba(165, 10, 10, 0.68) 0%, transparent 42%),
+    radial-gradient(circle at 92% 18%, rgba(150, 8, 8, 0.62) 0%, transparent 40%),
+    radial-gradient(circle at 88% 86%, rgba(170, 12, 12, 0.72) 0%, transparent 46%),
+    radial-gradient(circle at 14% 88%, rgba(135, 8, 8, 0.58) 0%, transparent 42%),
+    radial-gradient(circle at 50% 4%, rgba(120, 6, 6, 0.45) 0%, transparent 38%),
+    radial-gradient(ellipse at 50% 48%, rgba(6, 1, 1, 0.88) 18%, rgba(45, 3, 3, 0.45) 68%, rgba(4, 0, 0, 0.95) 100%),
+    repeating-linear-gradient(
+      122deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    repeating-linear-gradient(
+      34deg,
+      rgba(190, 15, 15, 0.06) 0px,
+      rgba(190, 15, 15, 0.06) 2px,
+      transparent 2px,
+      transparent 13px
+    );
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* TIPOGRAFIA PINCELADA */
+.brush-heading,
+.brand-title,
+.hero-title {
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 3px 4px 0 rgba(0, 0, 0, 0.85);
+}
+
+/* CABEÇALHO */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 5%;
+  border-bottom: 1px solid rgba(180, 30, 30, 0.35);
+  background: rgba(8, 1, 1, 0.72);
+  backdrop-filter: blur(4px);
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-title {
+  font-size: clamp(24px, 4vw, 38px);
+  color: var(--white);
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  letter-spacing: 4px;
+  margin-top: 2px;
+  color: #d8cece;
+  text-align: center;
+}
+
+.top-actions,
+.sheet-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* BOTÕES */
+.button {
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  transition: 0.2s ease;
+}
+
+.button-red {
+  background: #9e1414;
+  border-color: #d12828;
+}
+
+.button-red:hover {
+  background: #c91d1d;
+}
+
+.button-blue {
+  background: #134a8e;
+  border-color: #2e8bff;
+}
+
+.button-blue:hover {
+  background: #1f66bd;
+}
+
+.button-outline {
+  border-color: rgba(185, 45, 45, 0.55);
+  background: rgba(15, 3, 3, 0.6);
+  color: #e6dada;
+}
+
+.button-outline:hover {
+  background: #470c0c;
+  border-color: #c92a2a;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* LOBBY */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.lobby-hero {
+  text-align: center;
+  padding: 60px 5% 40px;
+}
+
+.hero-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: clamp(46px, 9vw, 96px);
+  line-height: 1;
+  margin: 0;
+  color: var(--white);
+}
+
+.hero-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(14px, 2vw, 22px);
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: var(--white);
+  margin-top: 6px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.85);
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 18px;
+}
+
+.character-section,
+.master-summary {
+  margin: 0 5% 50px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.section-title h2 {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, #851818, transparent);
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.character-card {
+  border: 1px solid #591616;
+  background: rgba(18, 4, 4, 0.85);
+  min-height: 135px;
+  padding: 18px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+}
+
+.character-card:hover {
+  border-color: #d91c1c;
+  transform: translateY(-3px);
+}
+
+.character-card h3 {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  font-weight: 400;
+  margin: 0 0 6px;
+  padding-right: 24px;
+  color: white;
+}
+
+.character-card p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-resources {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 16px;
+}
+
+.card-hp { color: var(--hp); }
+.card-pa { color: var(--pa); }
+
+.card-delete {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  border: none;
+  background: transparent;
+  color: #c46262;
+  font-size: 24px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+
+.card-delete:hover {
+  color: #ff4d4d;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  border: 1px dashed #5e1919;
+  background: rgba(12, 2, 2, 0.6);
+  color: var(--muted);
+}
+
+.empty-icon {
+  font-size: 46px;
+  color: #7d1c1c;
+}
+
+/* RESUMO MESTRE */
+.master-summary {
+  padding: 20px;
+  border: 1px solid #7a1c1c;
+  background: rgba(20, 4, 4, 0.85);
+}
+
+.summary-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.summary-heading h2 {
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  margin: 0;
+}
+
+.summary-list {
+  display: grid;
+  gap: 10px;
+}
+
+.summary-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 110px 110px;
+  gap: 12px;
+  align-items: end;
+  min-height: 76px;
+  padding: 12px 14px 12px 76px;
+  background: rgba(36, 8, 8, 0.85);
+  border: 1px solid rgba(155, 30, 30, 0.35);
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.summary-row:hover {
+  border-color: var(--red);
+}
+
+/* FOTO NO CANTO INFERIOR ESQUERDO NA VISÃO DO MESTRE */
+.summary-portrait-corner {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  width: 56px;
+  height: 56px;
+  border: 1px solid rgba(217, 28, 28, 0.65);
+  background: rgba(10, 2, 2, 0.92);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-portrait-corner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.summary-portrait-empty {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 18px;
+  color: rgba(215, 70, 70, 0.7);
+}
+
+.summary-row .summary-pv { color: var(--hp); font-weight: 700; }
+.summary-row .summary-pa { color: var(--pa); font-weight: 700; }
+
+/* EDITOR DE FICHA */
+.sheet-screen {
+  padding: 18px 4% 50px;
+}
+
+.sheet-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.save-status {
+  font-size: 10px;
+  color: #82a876;
+  letter-spacing: 1px;
+}
+
+.sheet-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(160, 30, 30, 0.4);
+  margin-bottom: 20px;
+}
+
+.sheet-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: #9e8484;
+  padding: 10px 18px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+}
+
+.sheet-tab.active {
+  color: white;
+  border-bottom-color: var(--red);
+}
+
+.sheet-page {
+  display: none;
+}
+
+.sheet-page.active {
+  display: block;
+}
+
+/* LAYOUT PRINCIPAL DA FICHA */
+.character-sheet {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 40%) 1fr;
+  gap: 32px;
+  align-items: end;
+  background: transparent;
+  border: none;
+}
+
+/* RETRATO */
+.portrait-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.portrait-frame {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 620px;
+  object-fit: contain;
+  object-position: bottom center;
+  z-index: 1;
+}
+
+.portrait-placeholder {
+  width: 100%;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(210, 45, 45, 0.55);
+  border: 1px dashed rgba(180, 40, 40, 0.35);
+  z-index: 1;
+}
+
+.portrait-placeholder span {
+  font-size: 72px;
+}
+
+.portrait-placeholder p {
+  font-family: 'Permanent Marker', cursive;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+
+.portrait-upload {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  padding: 7px 12px;
+  background: rgba(10, 2, 2, 0.82);
+  border: 1px solid rgba(200, 45, 45, 0.6);
+  color: #f0e6e6;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s;
+}
+
+.portrait-upload:hover {
+  opacity: 1;
+  background: #8c1111;
+}
+
+/* NOME E CLASSE NA BASE DO RETRATO */
+.portrait-overlay-info {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  margin-top: -12px;
+  padding: 6px 12px 10px 36%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.portrait-overlay-info input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: left;
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1;
+  color: var(--white);
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
+  padding: 0;
+}
+
+.portrait-overlay-info input::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.portrait-overlay-info select {
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: left;
+  text-align-last: left;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  color: var(--white);
+  text-shadow: 2px 2px 0 #000;
+  cursor: pointer;
+  padding: 2px 0 0 2px;
+  appearance: none;
+}
+
+.portrait-overlay-info select option {
+  background: #140404;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.portrait-overlay-info select optgroup {
+  background: #0d0202;
+  color: #e65c5c;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* LADO DIREITO: PÁGINA 1 */
+.sheet-right-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+}
+
+.sheet-information {
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.stats-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(36px, 7vw, 100px);
+}
+
+.attributes-column h2,
+.defense-column h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  margin: 0 0 14px 0;
+  color: var(--white);
+}
+
+/* ATRIBUTOS EM DESIGN LIVRE (SEM LINHA EMBAIXO) + CAIXINHA DE DADO */
+.attributes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.attribute-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attribute-row label {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 20px;
+  color: var(--white);
+  min-width: 36px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.attribute-row input {
+  width: 38px;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  text-align: center;
+  outline: none;
+  padding: 0;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.dice-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(217, 28, 28, 0.55);
+  background: rgba(18, 3, 3, 0.78);
+  font-family: 'Permanent Marker', cursive;
+  font-size: 16px;
+  color: #f5d0d0;
+  text-shadow: 1px 2px 0 #000;
+}
+
+/* DF COM CONTROLES + E - E AFINIDADE EMBAIXO */
+.defense-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.defense-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.defense-number {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(42px, 5vw, 56px);
+  line-height: 1;
+  color: var(--white);
+  text-shadow: 3px 3px 0 #000;
+  min-width: 56px;
+  text-align: center;
+}
+
+/* AFINIDADE DISCRETA EMBAIXO DA DF */
+.affinity-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 5px 9px;
+  border: 1px solid rgba(165, 40, 40, 0.32);
+  background: rgba(14, 3, 3, 0.65);
+  align-self: center;
+}
+
+.affinity-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.affinity-select {
+  background: rgba(10, 2, 2, 0.85);
+  border: 1px solid rgba(165, 40, 40, 0.4);
+  color: var(--white);
+  font-size: 12px;
+  padding: 3px 7px;
+  outline: none;
+  cursor: pointer;
+}
+
+.affinity-select:focus {
+  border-color: var(--red);
+}
+
+.affinity-select option {
+  background: #140404;
+  color: var(--white);
+}
+
+/* PV E PA */
+.resources-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: flex-start;
+}
+
+.resource-block {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.resource-label {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(28px, 3.5vw, 36px);
+  line-height: 1;
+  margin-bottom: 6px;
+  text-shadow: 2px 3px 0 #000;
+}
+
+.resource-hp .resource-label,
+.resource-hp input,
+.resource-hp .resource-divider {
+  color: var(--hp);
+}
+
+.resource-pa .resource-label,
+.resource-pa input,
+.resource-pa .resource-divider {
+  color: var(--pa);
+}
+
+.resource-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.resource-controls input {
+  width: 78px;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(34px, 4.5vw, 48px);
+  line-height: 1;
+  text-shadow: 3px 3px 0 #000;
+  padding: 0;
+}
+
+.resource-divider {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(34px, 4.5vw, 48px);
+  line-height: 1;
+  text-shadow: 3px 3px 0 #000;
+  user-select: none;
+}
+
+.resource-button {
+  width: 26px;
+  height: 26px;
+  background: rgba(15, 3, 3, 0.65);
+  color: #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.65;
+  transition: 0.2s;
+}
+
+.resource-button:hover {
+  opacity: 1;
+  color: white;
+  border-color: white;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* BLOCO DE ARMA */
+.weapon-box {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  padding: 12px 14px;
+  border: 1px solid rgba(217, 28, 28, 0.45);
+  background: rgba(16, 3, 3, 0.82);
+  max-width: 660px;
+}
+
+.weapon-thumb-wrap {
+  position: relative;
+  width: 92px;
+  min-width: 92px;
+  height: 92px;
+  border: 1px solid rgba(217, 28, 28, 0.55);
+  background: rgba(8, 2, 2, 0.9);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weapon-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.weapon-thumb-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(215, 85, 85, 0.65);
+  gap: 2px;
+}
+
+.weapon-thumb-placeholder span {
+  font-size: 22px;
+}
+
+.weapon-thumb-placeholder small {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.weapon-upload-btn {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 2, 2, 0.86);
+  border-top: 1px solid rgba(217, 28, 28, 0.5);
+  color: #f5e8e8;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.weapon-upload-btn:hover {
+  background: #9e1414;
+}
+
+.weapon-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.weapon-fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.weapon-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.weapon-field label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #cf6363;
+}
+
+.weapon-field input,
+.weapon-field select {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(9, 2, 2, 0.85);
+  border: 1px solid rgba(185, 40, 40, 0.45);
+  color: var(--white);
+  font-size: 12px;
+  outline: none;
+}
+
+.weapon-field input:focus,
+.weapon-field select:focus {
+  border-color: var(--red);
+}
+
+.weapon-field select option {
+  background: #140404;
+  color: var(--white);
+}
+
+.weapon-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: baseline;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(185, 40, 40, 0.3);
+}
+
+.weapon-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.weapon-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.weapon-damage-value {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 18px;
+  color: #ff4a4a;
+  text-shadow: 1px 2px 0 #000;
+}
+
+.weapon-rule-value {
+  font-size: 12px;
+  color: #e6dada;
+}
+
+/* PÁGINA 2: RITUAIS E HABILIDADES */
+.abilities-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding: 10px 0;
+}
+
+.stack-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.stack-header h2 {
+  font-size: clamp(26px, 3.2vw, 34px);
+  margin: 0;
+}
+
+.limit-message {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.entry-card {
+  border: 1px solid rgba(180, 35, 35, 0.45);
+  padding: 14px 16px;
+  background: rgba(16, 4, 4, 0.82);
+  position: relative;
+}
+
+.ritual-section .entry-card {
+  border-color: rgba(46, 139, 255, 0.45);
+  background: rgba(8, 16, 28, 0.82);
+}
+
+.entry-top {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-right: 22px;
+}
+
+.entry-name { flex: 1; }
+.entry-cost { width: 85px; }
+
+.entry-card label {
+  display: block;
+  color: #c95959;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.ritual-section .entry-card label {
+  color: #5ca4ff;
+}
+
+.entry-card input,
+.entry-card textarea {
+  width: 100%;
+  padding: 8px 10px;
+  color: white;
+  background: rgba(8, 2, 2, 0.75);
+  border: 1px solid rgba(150, 35, 35, 0.4);
+  outline: none;
+}
+
+.ritual-section .entry-card input,
+.ritual-section .entry-card textarea {
+  border-color: rgba(46, 139, 255, 0.35);
+  background: rgba(5, 10, 18, 0.75);
+}
+
+.entry-card textarea {
+  resize: vertical;
+  min-height: 68px;
+}
+
+.remove-entry {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  color: #b84b4b;
+  background: transparent;
+  font-size: 20px;
+}
+
+/* MODAIS */
+.custom-dialog {
+  width: min(500px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #120303;
+  border: 1px solid #8a1c1c;
+  color: white;
+  padding: 24px;
+}
+
+.custom-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.dialog-header h2 {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.close-dialog {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 28px;
+}
+
+.custom-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-dialog label {
+  font-size: 11px;
+  color: #c95555;
+  letter-spacing: 1px;
+}
+
+.custom-dialog input,
+.custom-dialog textarea {
+  background: #1f0707;
+  color: white;
+  border: 1px solid #631d1d;
+  padding: 10px;
+  outline: none;
+}
+
+.dialog-classes-title {
+  margin-top: 28px;
+}
+
+.classes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.class-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #4a1414;
+}
+
+.class-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.class-row-info small {
+  color: #9e7e7e;
+}
+
+.class-delete {
+  border: 0;
+  color: #d14747;
+  background: transparent;
+  font-size: 20px;
+}
+
+.access-error {
+  color: #f05454;
+  font-size: 12px;
+}
+
+/* MODO APRESENTAÇÃO */
+body.presentation-mode {
+  overflow: hidden;
+}
+
+.presentation-mode .topbar,
+.presentation-mode .sheet-toolbar,
+.presentation-mode .sheet-tabs,
+.presentation-mode .portrait-upload,
+.presentation-mode .resource-button,
+.presentation-mode .weapon-upload-btn {
+  display: none !important;
+}
+
+.presentation-mode .affinity-row {
+  border-color: transparent;
+  background: transparent;
+  padding-left: 0;
+}
+
+.presentation-mode .affinity-select {
+  border: none;
+  background: transparent;
+  appearance: none;
+  padding-left: 0;
+}
+
+.presentation-mode #sheetScreen {
+  display: flex !important;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  margin: 0;
+  padding: 20px 5%;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .character-sheet {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .portrait {
+    max-height: 460px;
+  }
+
+  .stats-top-row {
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+
+  .resources-row {
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 20px;
+  }
+
+  .resource-controls input {
+    width: 62px;
+    font-size: 32px;
+  }
+
+  .resource-divider {
+    font-size: 32px;
+  }
+
+  .weapon-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .weapon-fields-row {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-row {
+    grid-template-columns: 1fr 80px 80px;
+  }
+
+  .summary-row .summary-class {
+    display: none;
+  }
+}

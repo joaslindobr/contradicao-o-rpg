@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080101">
+  <title>CONTRADIÇÃO — O RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- FUNDO -->
+  <div class="background-texture"></div>
+
+  <!-- CABEÇALHO -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-title">CONTRADIÇÃO</span>
+      <span class="brand-subtitle">O RPG</span>
+    </div>
+
+    <div class="top-actions">
+      <button id="masterButton" class="button button-outline" type="button">
+        MESTRE
+      </button>
+
+      <button id="createCharacterButton" class="button button-red" type="button">
+        + NOVA FICHA
+      </button>
+    </div>
+  </header>
+
+  <!-- LOBBY -->
+  <main id="lobbyScreen" class="screen active">
+
+    <section class="lobby-hero">
+      <div class="hero-logo">
+        <h1 class="hero-title">CONTRADIÇÃO</h1>
+        <span class="hero-subtitle">O RPG</span>
+      </div>
+      <p class="subtitle">As contradições que ainda permanecem (<span id="characterCount">0</span>)</p>
+    </section>
+
+    <!-- RESUMO DO MESTRE -->
+    <section id="masterSummary" class="master-summary hidden">
+      <div class="summary-heading">
+        <h2>VISÃO DO MESTRE</h2>
+        <button id="manageClassesButton" class="button button-outline" type="button">
+          CLASSES
+        </button>
+      </div>
+
+      <div id="summaryList" class="summary-list"></div>
+    </section>
+
+    <!-- LISTA DE FICHAS -->
+    <section class="character-section">
+      <div class="section-title">
+        <h2>PERSONAGENS</h2>
+        <span class="section-line"></span>
+      </div>
+
+      <div id="characterGrid" class="character-grid"></div>
+
+      <div id="emptyState" class="empty-state">
+        <span class="empty-icon">∅</span>
+        <h3>NENHUMA FICHA ENCONTRADA</h3>
+        <p>O vazio aguarda sua primeira contradição.</p>
+
+        <button class="button button-red" type="button" onclick="createCharacter()">
+          CRIAR PRIMEIRA FICHA
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- EDITOR DE FICHA -->
+  <main id="sheetScreen" class="screen sheet-screen hidden">
+
+    <div class="sheet-toolbar">
+      <button id="backButton" class="button button-outline" type="button">
+        ← VOLTAR
+      </button>
+
+      <div class="sheet-toolbar-actions">
+        <span id="saveStatus" class="save-status">
+          SINCRONIZADO
+        </span>
+
+        <button id="fullscreenButton" class="button button-outline" type="button">
+          ⛶ APRESENTAÇÃO
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVEGAÇÃO ENTRE PÁGINAS -->
+    <nav class="sheet-tabs">
+      <button class="sheet-tab active" data-tab="main" type="button">
+        PERSONAGEM
+      </button>
+
+      <button class="sheet-tab" data-tab="abilities" type="button">
+        RITUAIS &amp; HABILIDADES
+      </button>
+    </nav>
+
+    <div class="character-sheet">
+
+      <!-- LADO ESQUERDO: RETRATO + NOME/CLASSE -->
+      <div class="portrait-section">
+        <div class="portrait-frame">
+          <img id="characterPortrait"
+               src=""
+               alt="Retrato do personagem"
+               class="portrait hidden">
+
+          <div id="portraitPlaceholder" class="portrait-placeholder">
+            <span>∅</span>
+            <p>SEM IMAGEM</p>
+          </div>
+
+          <label for="portraitInput" class="portrait-upload">
+            ALTERAR IMAGEM
+          </label>
+
+          <input type="file"
+                 id="portraitInput"
+                 accept="image/*"
+                 hidden>
+
+          <div class="portrait-overlay-info">
+            <input id="characterName"
+                   type="text"
+                   maxlength="40"
+                   placeholder="NOME"
+                   aria-label="Nome do personagem">
+
+            <select id="characterClass" aria-label="Classe do personagem">
+              <option value="">CLASSE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- LADO DIREITO: PÁGINAS -->
+      <div class="sheet-right-content">
+
+        <!-- PÁGINA 1: ATRIBUTOS, DF, AFINIDADE, PV, PA E ARMA -->
+        <section id="mainSheetPage" class="sheet-page active">
+          <div class="sheet-information">
+
+            <div class="stats-top-row">
+              <div class="attributes-column">
+                <h2 class="brush-heading">ATRIBUTOS</h2>
+
+                <div class="attributes-list">
+                  <div class="attribute-row">
+                    <label for="attributeDT">DT:</label>
+                    <input id="attributeDT" type="number" min="1" max="5" value="1">
+                    <span id="dadoDT" class="dice-box">0</span>
+                  </div>
+
+                  <div class="attribute-row">
+                    <label for="attributeFR">FR:</label>
+                    <input id="attributeFR" type="number" min="1" max="5" value="1">
+                    <span id="dadoFR" class="dice-box">0</span>
+                  </div>
+
+                  <div class="attribute-row">
+                    <label for="attributeIT">IT:</label>
+                    <input id="attributeIT" type="number" min="1" max="5" value="1">
+                    <span id="dadoIT" class="dice-box">0</span>
+                  </div>
+
+                  <div class="attribute-row">
+                    <label for="attributePR">PR:</label>
+                    <input id="attributePR" type="number" min="1" max="5" value="1">
+                    <span id="dadoPR" class="dice-box">0</span>
+                  </div>
+
+                  <div class="attribute-row">
+                    <label for="attributeAG">AG:</label>
+                    <input id="attributeAG" type="number" min="1" max="5" value="1">
+                    <span id="dadoAG" class="dice-box">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DF COM BOTÕES + E - E AFINIDADE EMBAIXO -->
+              <div class="defense-column">
+                <h2 class="brush-heading">DF</h2>
+                <div class="defense-controls">
+                  <button type="button" class="resource-button" onclick="changeDefense(-1)">−</button>
+                  <span id="defenseValue" class="defense-number">15</span>
+                  <button type="button" class="resource-button" onclick="changeDefense(1)">+</button>
+                </div>
+
+                <div class="affinity-row">
+                  <label for="characterAffinity" class="affinity-label">AFINIDADE</label>
+                  <select id="characterAffinity" class="affinity-select" aria-label="Afinidade do personagem">
+                    <option value="">Escolher...</option>
+                    <option value="Visão">Visão</option>
+                    <option value="Oufato">Oufato</option>
+                    <option value="Audição">Audição</option>
+                    <option value="Paladar">Paladar</option>
+                    <option value="Tato">Tato</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="resources-row">
+
+              <!-- PV -->
+              <div class="resource-block resource-hp">
+                <div class="resource-label">PV</div>
+                <div class="resource-controls">
+                  <button type="button" class="resource-button" onclick="changeResource('pv', -1)">−</button>
+                  <input id="pvCurrent" type="number" min="0" value="10">
+                  <span class="resource-divider">/</span>
+                  <input id="pvMax" type="number" min="1" value="10">
+                  <button type="button" class="resource-button" onclick="changeResource('pv', 1)">+</button>
+                </div>
+              </div>
+
+              <!-- PA -->
+              <div class="resource-block resource-pa">
+                <div class="resource-label">PA</div>
+                <div class="resource-controls">
+                  <button type="button" class="resource-button" onclick="changeResource('pa', -1)">−</button>
+                  <input id="paCurrent" type="number" min="0" value="10">
+                  <span class="resource-divider">/</span>
+                  <input id="paMax" type="number" min="1" value="10">
+                  <button type="button" class="resource-button" onclick="changeResource('pa', 1)">+</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ARMA EQUIPADA -->
+            <section class="weapon-box" aria-label="Arma do personagem">
+              <div class="weapon-thumb-wrap">
+                <img id="weaponImage"
+                     src=""
+                     alt="Imagem da arma"
+                     class="weapon-thumb hidden">
+
+                <div id="weaponPlaceholder" class="weapon-thumb-placeholder">
+                  <span>⚔</span>
+                  <small>ARMA</small>
+                </div>
+
+                <label for="weaponInput" class="weapon-upload-btn">
+                  IMAGEM
+                </label>
+
+                <input type="file"
+                       id="weaponInput"
+                       accept="image/*"
+                       hidden>
+              </div>
+
+              <div class="weapon-details">
+                <div class="weapon-fields-row">
+                  <div class="weapon-field">
+                    <label for="weaponCustomName">NOME DA ARMA</label>
+                    <input id="weaponCustomName"
+                           type="text"
+                           maxlength="40"
+                           placeholder="Ex: Lâmina Rubra">
+                  </div>
+
+                  <div class="weapon-field">
+                    <label for="weaponType">TIPO DE ARMA</label>
+                    <select id="weaponType">
+                      <option value="">— SELECIONAR ARMA —</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="weapon-stats-bar">
+                  <div class="weapon-stat">
+                    <span class="weapon-stat-label">DANO</span>
+                    <strong id="weaponDamage" class="weapon-damage-value">—</strong>
+                  </div>
+
+                  <div class="weapon-stat weapon-rule-stat">
+                    <span class="weapon-stat-label">REGRA PRINCIPAL</span>
+                    <span id="weaponRule" class="weapon-rule-value">—</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </section>
+
+        <!-- PÁGINA 2: RITUAIS E HABILIDADES -->
+        <section id="abilitiesSheetPage" class="sheet-page hidden">
+          <div class="abilities-stack">
+
+            <section class="ritual-section">
+              <div class="stack-header">
+                <h2 class="brush-heading">RITUAIS</h2>
+                <button id="addRitualButton" class="button button-blue" type="button">
+                  + ADICIONAR RITUAL
+                </button>
+              </div>
+              <div id="ritualsList" class="entries-list"></div>
+            </section>
+
+            <section class="ability-section">
+              <div class="stack-header">
+                <div>
+                  <h2 class="brush-heading">HABILIDADES</h2>
+                  <span id="abilityLimit" class="limit-message">0 / 3 HABILIDADES</span>
+                </div>
+                <button id="addAbilityButton" class="button button-red" type="button">
+                  + ADICIONAR HABILIDADE
+                </button>
+              </div>
+              <div id="abilitiesList" class="entries-list"></div>
+            </section>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL CRIAR CLASSES -->
+  <dialog id="classesDialog" class="custom-dialog">
+    <div class="dialog-header">
+      <h2>CLASSES</h2>
+      <button class="close-dialog" type="button" onclick="closeDialog('classesDialog')">×</button>
+    </div>
+
+    <form id="classForm">
+      <label for="newClassName">NOME DA CLASSE</label>
+      <input id="newClassName" type="text" maxlength="40" placeholder="Nome da classe" required>
+
+      <label for="newClassDescription">DESCRIÇÃO</label>
+      <textarea id="newClassDescription" rows="3" placeholder="Descrição da classe..."></textarea>
+
+      <button class="button button-red" type="submit">
+        CRIAR CLASSE
+      </button>
+    </form>
+
+    <div class="section-title dialog-classes-title">
+      <h2>CLASSES EXISTENTES</h2>
+      <span class="section-line"></span>
+    </div>
+
+    <div id="classesList" class="classes-list"></div>
+  </dialog>
+
+  <!-- MODAL DE ACESSO -->
+  <dialog id="accessDialog" class="custom-dialog access-dialog">
+    <div class="dialog-header">
+      <h2>ACESSO</h2>
+      <button class="close-dialog" type="button" onclick="closeDialog('accessDialog')">×</button>
+    </div>
+
+    <p>Digite sua chave de acesso.</p>
+
+    <form id="accessForm">
+      <input id="accessKey" type="password" placeholder="Chave de acesso" required>
+      <button class="button button-red" type="submit">
+        ENTRAR
+      </button>
+    </form>
+
+    <p id="accessError" class="access-error"></p>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
