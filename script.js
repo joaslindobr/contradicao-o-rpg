@@ -3,13 +3,13 @@
    Sistema de fichas + Supabase
    ========================================= */
 
-const SUPABASE_URL = "https://cmklpgzvymrwcuuycoxy.supabase.co/rest/v1/";
+const SUPABASE_URL = "(https://cmklpgzvymrwcuuycoxy.supabase.co)";
 const SUPABASE_ANON_KEY = "sb_publishable_4kSJLFKeaj22hk5pWrWXkA_B0tCIwoh";
 
 const supabaseClient =
   window.supabase &&
   SUPABASE_URL &&
-  !SUPABASE_URL.includes("https://cmklpgzvymrwcuuycoxy.supabase.co/rest/v1/") &&
+  !SUPABASE_URL.includes("(https://cmklpgzvymrwcuuycoxy.supabase.co)") &&
   SUPABASE_ANON_KEY &&
   !SUPABASE_ANON_KEY.includes("sb_publishable_4kSJLFKeaj22hk5pWrWXkA_B0tCIwoh")
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
