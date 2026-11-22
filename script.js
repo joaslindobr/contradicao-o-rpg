@@ -1279,8 +1279,8 @@ function uploadPortrait(event) {
     return;
   }
 
-  if (file.size > 1.5 * 1024 * 1024) {
-    alert("Escolha uma imagem de até 1,5 MB para manter o salvamento rápido.");
+  if (file.size > 3 * 1024 * 1024) {
+    alert("Escolha uma imagem de até 3 MB para manter o salvamento rápido.");
     return;
   }
 
@@ -1304,8 +1304,8 @@ function uploadWeaponImage(event) {
     return;
   }
 
-  if (file.size > 1.5 * 1024 * 1024) {
-    alert("Escolha uma imagem de até 1,5 MB para manter o salvamento rápido.");
+  if (file.size > 3 * 1024 * 1024) {
+    alert("Escolha uma imagem de até 3 MB para manter o salvamento rápido.");
     return;
   }
 
