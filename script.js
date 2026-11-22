@@ -3,13 +3,13 @@
    Sistema de fichas + Supabase
    ========================================= */
 
-const SUPABASE_URL = "(https://cmklpgzvymrwcuuycoxy.supabase.co)";
+const SUPABASE_URL = "https://cmklpgzvymrwcuuycoxy.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_4kSJLFKeaj22hk5pWrWXkA_B0tCIwoh";
 
 const supabaseClient =
   window.supabase &&
   SUPABASE_URL &&
-  !SUPABASE_URL.includes("(https://cmklpgzvymrwcuuycoxy.supabase.co)") &&
+  !SUPABASE_URL.includes("https://cmklpgzvymrwcuuycoxy.supabase.co") &&
   SUPABASE_ANON_KEY &&
   !SUPABASE_ANON_KEY.includes("sb_publishable_4kSJLFKeaj22hk5pWrWXkA_B0tCIwoh")
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -141,16 +141,21 @@ const WEAPONS_CATALOG = {
   sniper_curta: {
     name: "Sniper — curta",
     damage: "2d12",
-    rule: "—"
+    rule: "-10 por distância"
   },
   sniper_media: {
     name: "Sniper — média",
-    damage: "3d12",
-    rule: "—"
+    damage: "2d12",
+    rule: "-5 por distância"
   },
   sniper_longa: {
     name: "Sniper — longa",
-    damage: "4d12",
+    damage: "4d12+1d4 por distância",
+    rule: "—"
+  },
+  foice: {
+    name: "Foice",
+    damage: "2d12",
     rule: "—"
   }
 };
@@ -206,7 +211,7 @@ async function loadData() {
       ]);
 
     if (!charsError && Array.isArray(charsData)) {
-      characters = charsData.map(row => ({
+      characters = charsData.map(row => normalizeCharacter({
         ...(row.data || {}),
         id: row.id
       }));
@@ -236,6 +241,52 @@ async function loadData() {
   } catch (error) {
     showSaveStatus("SALVO LOCALMENTE");
   }
+}
+
+function normalizeCharacter(raw) {
+  const safe = raw || {};
+  const invArray = Array.isArray(safe.inventario) ? safe.inventario : [];
+  const count = Math.min(
+    50,
+    Math.max(0, Number.isFinite(parseInt(safe.inventarioCount, 10)) ? parseInt(safe.inventarioCount, 10) : invArray.length || 3)
+  );
+
+  const normalizedInv = [];
+  for (let i = 0; i < count; i++) {
+    const existing = invArray[i] || {};
+    normalizedInv.push({
+      id: existing.id || `item_${i + 1}`,
+      nome: typeof existing.nome === "string" ? existing.nome : "",
+      qtd: Math.max(0, parseInt(existing.qtd, 10) || 1),
+      descricao: typeof existing.descricao === "string" ? existing.descricao : ""
+    });
+  }
+
+  return {
+    ...safe,
+    nome: safe.nome ?? "NOME",
+    imagem: safe.imagem ?? "",
+    classe: safe.classe ?? "",
+    afinidade: safe.afinidade ?? "",
+    palavraDe: safe.palavraDe ?? "",
+    dt: safe.dt ?? 1,
+    fr: safe.fr ?? 1,
+    it: safe.it ?? 1,
+    pr: safe.pr ?? 1,
+    ag: safe.ag ?? 1,
+    dfBonus: typeof safe.dfBonus === "number" ? safe.dfBonus : 0,
+    pvAtual: safe.pvAtual ?? 10,
+    pvMax: safe.pvMax ?? 10,
+    paAtual: safe.paAtual ?? 10,
+    paMax: safe.paMax ?? 10,
+    armaNome: safe.armaNome ?? "",
+    armaTipo: safe.armaTipo ?? "",
+    armaImagem: safe.armaImagem ?? "",
+    habilidades: Array.isArray(safe.habilidades) ? safe.habilidades : [],
+    rituais: Array.isArray(safe.rituais) ? safe.rituais : [],
+    inventarioCount: count,
+    inventario: normalizedInv
+  };
 }
 
 function saveData(characterToSync = null) {
@@ -341,6 +392,9 @@ function bindEvents() {
   document.getElementById("fullscreenButton")
     .addEventListener("click", togglePresentation);
 
+  document.getElementById("exitPresentationButton")
+    .addEventListener("click", exitPresentation);
+
   document.getElementById("addAbilityButton")
     .addEventListener("click", addAbility);
 
@@ -359,7 +413,7 @@ function bindEvents() {
     });
   });
 
-  ["characterName", "characterClass", "characterAffinity", "weaponCustomName", "weaponType"].forEach(id => {
+  ["characterName", "characterClass", "characterAffinity", "characterDeWord", "weaponCustomName", "weaponType"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("input", () => updateSheetFromInputs(false));
@@ -385,9 +439,24 @@ function bindEvents() {
     el.addEventListener("blur", () => updateSheetFromInputs(true));
   });
 
+  const invCountInput = document.getElementById("inventoryItemCount");
+  if (invCountInput) {
+    invCountInput.addEventListener("input", () => {
+      const val = invCountInput.value;
+      if (val === "") return;
+      setInventoryCount(parseInt(val, 10) || 0, false);
+    });
+    invCountInput.addEventListener("change", () => {
+      setInventoryCount(parseInt(invCountInput.value, 10) || 0, true);
+    });
+    invCountInput.addEventListener("blur", () => {
+      setInventoryCount(parseInt(invCountInput.value, 10) || 0, true);
+    });
+  }
+
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
-      document.body.classList.remove("presentation-mode");
+      exitPresentation();
     }
   });
 }
@@ -439,12 +508,13 @@ function updateWeaponDisplay() {
 }
 
 function createCharacter() {
-  const character = {
+  const character = normalizeCharacter({
     id: generateId(),
     nome: "NOME",
     imagem: "",
     classe: "",
     afinidade: "",
+    palavraDe: "",
     dt: 1,
     fr: 1,
     it: 1,
@@ -459,8 +529,10 @@ function createCharacter() {
     armaTipo: "",
     armaImagem: "",
     habilidades: [],
-    rituais: []
-  };
+    rituais: [],
+    inventarioCount: 3,
+    inventario: []
+  });
 
   characters.push(character);
   saveData(character);
@@ -551,6 +623,10 @@ function openCharacter(id) {
   const character = characters.find(c => c.id === id);
   if (!character) return;
 
+  const normalized = normalizeCharacter(character);
+  const idx = characters.findIndex(c => c.id === id);
+  if (idx !== -1) characters[idx] = normalized;
+
   currentCharacterId = id;
 
   lobbyScreen.classList.remove("active");
@@ -559,12 +635,12 @@ function openCharacter(id) {
 
   renderClassOptions();
   renderWeaponOptions();
-  fillSheet(character);
+  fillSheet(normalized);
   switchTab("main");
 }
 
 async function backToLobby() {
-  document.body.classList.remove("presentation-mode");
+  exitPresentation();
 
   sheetScreen.classList.remove("active");
   sheetScreen.classList.add("hidden");
@@ -579,28 +655,27 @@ function getCurrentCharacter() {
 }
 
 function fillSheet(character) {
-  if (typeof character.dfBonus !== "number") {
-    character.dfBonus = 0;
-  }
+  const c = normalizeCharacter(character);
 
-  document.getElementById("characterName").value = character.nome || "";
-  document.getElementById("characterClass").value = character.classe || "";
-  document.getElementById("characterAffinity").value = character.afinidade || "";
+  document.getElementById("characterName").value = c.nome || "";
+  document.getElementById("characterClass").value = c.classe || "";
+  document.getElementById("characterAffinity").value = c.afinidade || "";
+  document.getElementById("characterDeWord").value = c.palavraDe || "";
 
-  document.getElementById("attributeDT").value = character.dt ?? 1;
-  document.getElementById("attributeFR").value = character.fr ?? 1;
-  document.getElementById("attributeIT").value = character.it ?? 1;
-  document.getElementById("attributePR").value = character.pr ?? 1;
-  document.getElementById("attributeAG").value = character.ag ?? 1;
+  document.getElementById("attributeDT").value = c.dt ?? 1;
+  document.getElementById("attributeFR").value = c.fr ?? 1;
+  document.getElementById("attributeIT").value = c.it ?? 1;
+  document.getElementById("attributePR").value = c.pr ?? 1;
+  document.getElementById("attributeAG").value = c.ag ?? 1;
 
-  document.getElementById("pvCurrent").value = character.pvAtual;
-  document.getElementById("pvMax").value = character.pvMax;
+  document.getElementById("pvCurrent").value = c.pvAtual;
+  document.getElementById("pvMax").value = c.pvMax;
 
-  document.getElementById("paCurrent").value = character.paAtual;
-  document.getElementById("paMax").value = character.paMax;
+  document.getElementById("paCurrent").value = c.paAtual;
+  document.getElementById("paMax").value = c.paMax;
 
-  document.getElementById("weaponCustomName").value = character.armaNome || "";
-  document.getElementById("weaponType").value = character.armaTipo || "";
+  document.getElementById("weaponCustomName").value = c.armaNome || "";
+  document.getElementById("weaponType").value = c.armaTipo || "";
 
   updateAttributeDice();
   updateDefense();
@@ -609,8 +684,8 @@ function fillSheet(character) {
   const portrait = document.getElementById("characterPortrait");
   const placeholder = document.getElementById("portraitPlaceholder");
 
-  if (character.imagem) {
-    portrait.src = character.imagem;
+  if (c.imagem) {
+    portrait.src = c.imagem;
     portrait.classList.remove("hidden");
     placeholder.classList.add("hidden");
   } else {
@@ -621,8 +696,8 @@ function fillSheet(character) {
   const weaponImg = document.getElementById("weaponImage");
   const weaponPlaceholder = document.getElementById("weaponPlaceholder");
 
-  if (character.armaImagem) {
-    weaponImg.src = character.armaImagem;
+  if (c.armaImagem) {
+    weaponImg.src = c.armaImagem;
     weaponImg.classList.remove("hidden");
     weaponPlaceholder.classList.add("hidden");
   } else {
@@ -631,6 +706,7 @@ function fillSheet(character) {
   }
 
   renderEntries();
+  renderInventory(c);
 }
 
 function updateSheetFromInputs(enforceBounds = false) {
@@ -640,6 +716,7 @@ function updateSheetFromInputs(enforceBounds = false) {
   character.nome = document.getElementById("characterName").value;
   character.classe = document.getElementById("characterClass").value;
   character.afinidade = document.getElementById("characterAffinity").value;
+  character.palavraDe = document.getElementById("characterDeWord").value;
   character.armaNome = document.getElementById("weaponCustomName").value;
   character.armaTipo = document.getElementById("weaponType").value;
 
@@ -762,6 +839,138 @@ function changeResource(type, amount) {
   }
 
   saveData(character);
+}
+
+/* INVENTÁRIO */
+function changeInventoryCount(delta) {
+  const character = getCurrentCharacter();
+  if (!character) return;
+  const current = character.inventarioCount ?? (character.inventario ? character.inventario.length : 3);
+  setInventoryCount(current + delta, true);
+}
+
+function setInventoryCount(newCount, syncInputValue = true) {
+  const character = getCurrentCharacter();
+  if (!character) return;
+
+  const clamped = Math.min(50, Math.max(0, parseInt(newCount, 10) || 0));
+  if (!Array.isArray(character.inventario)) {
+    character.inventario = [];
+  }
+
+  while (character.inventario.length < clamped) {
+    const idx = character.inventario.length + 1;
+    character.inventario.push({
+      id: `item_${idx}_${Date.now().toString(36)}`,
+      nome: "",
+      qtd: 1,
+      descricao: ""
+    });
+  }
+
+  if (character.inventario.length > clamped) {
+    character.inventario = character.inventario.slice(0, clamped);
+  }
+
+  character.inventarioCount = clamped;
+
+  if (syncInputValue) {
+    const countInput = document.getElementById("inventoryItemCount");
+    if (countInput) countInput.value = clamped;
+  }
+
+  renderInventory(character);
+  saveData(character);
+}
+
+function renderInventory(character) {
+  const c = normalizeCharacter(character);
+  const grid = document.getElementById("inventoryItemsGrid");
+  const countInput = document.getElementById("inventoryItemCount");
+  const label = document.getElementById("inventoryCountLabel");
+
+  if (!grid) return;
+
+  if (countInput && document.activeElement !== countInput) {
+    countInput.value = c.inventarioCount;
+  }
+
+  if (label) {
+    label.textContent = `${c.inventarioCount} ${c.inventarioCount === 1 ? "ITEM" : "ITENS"}`;
+  }
+
+  grid.innerHTML = "";
+
+  if (c.inventarioCount === 0) {
+    const emptyMsg = document.createElement("p");
+    emptyMsg.className = "limit-message";
+    emptyMsg.textContent = "Nenhum item selecionado. Aumente o número de itens acima.";
+    grid.appendChild(emptyMsg);
+    return;
+  }
+
+  c.inventario.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "inventory-slot-card";
+
+    const top = document.createElement("div");
+    top.className = "inventory-slot-top";
+
+    const indexSpan = document.createElement("span");
+    indexSpan.className = "inventory-slot-index";
+    indexSpan.textContent = `ITEM ${index + 1}`;
+
+    const qtdWrap = document.createElement("div");
+    qtdWrap.className = "inventory-slot-qtd-wrap";
+
+    const qtdLabel = document.createElement("span");
+    qtdLabel.textContent = "QTD";
+
+    const qtdInput = document.createElement("input");
+    qtdInput.type = "number";
+    qtdInput.min = "0";
+    qtdInput.className = "inventory-slot-qtd";
+    qtdInput.value = item.qtd ?? 1;
+    qtdInput.addEventListener("input", () => {
+      const targetChar = getCurrentCharacter();
+      if (!targetChar || !targetChar.inventario[index]) return;
+      targetChar.inventario[index].qtd = Math.max(0, parseInt(qtdInput.value, 10) || 0);
+      saveData(targetChar);
+    });
+
+    qtdWrap.appendChild(qtdLabel);
+    qtdWrap.appendChild(qtdInput);
+
+    top.appendChild(indexSpan);
+    top.appendChild(qtdWrap);
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.maxlength = "60";
+    nameInput.placeholder = "Nome do item...";
+    nameInput.value = item.nome || "";
+    nameInput.addEventListener("input", () => {
+      const targetChar = getCurrentCharacter();
+      if (!targetChar || !targetChar.inventario[index]) return;
+      targetChar.inventario[index].nome = nameInput.value;
+      saveData(targetChar);
+    });
+
+    const descInput = document.createElement("textarea");
+    descInput.placeholder = "Detalhes ou peso/efeito...";
+    descInput.value = item.descricao || "";
+    descInput.addEventListener("input", () => {
+      const targetChar = getCurrentCharacter();
+      if (!targetChar || !targetChar.inventario[index]) return;
+      targetChar.inventario[index].descricao = descInput.value;
+      saveData(targetChar);
+    });
+
+    card.appendChild(top);
+    card.appendChild(nameInput);
+    card.appendChild(descInput);
+    grid.appendChild(card);
+  });
 }
 
 async function createClass(event) {
@@ -1070,8 +1279,8 @@ function uploadPortrait(event) {
     return;
   }
 
-  if (file.size > 3 * 1024 * 1024) {
-    alert("Escolha uma imagem de até 3 MB para manter o salvamento rápido.");
+  if (file.size > 1.5 * 1024 * 1024) {
+    alert("Escolha uma imagem de até 1,5 MB para manter o salvamento rápido.");
     return;
   }
 
@@ -1095,8 +1304,8 @@ function uploadWeaponImage(event) {
     return;
   }
 
-  if (file.size > 3 * 1024 * 1024) {
-    alert("Escolha uma imagem de até 3 MB para manter o salvamento rápido.");
+  if (file.size > 1.5 * 1024 * 1024) {
+    alert("Escolha uma imagem de até 1,5 MB para manter o salvamento rápido.");
     return;
   }
 
@@ -1116,19 +1325,26 @@ function switchTab(tab) {
     button.classList.toggle("active", button.dataset.tab === tab);
   });
 
-  document.getElementById("mainSheetPage")
-    .classList.toggle("active", tab === "main");
-  document.getElementById("mainSheetPage")
-    .classList.toggle("hidden", tab !== "main");
+  const pages = {
+    main: document.getElementById("mainSheetPage"),
+    abilities: document.getElementById("abilitiesSheetPage"),
+    inventory: document.getElementById("inventorySheetPage")
+  };
 
-  document.getElementById("abilitiesSheetPage")
-    .classList.toggle("active", tab === "abilities");
-  document.getElementById("abilitiesSheetPage")
-    .classList.toggle("hidden", tab !== "abilities");
+  Object.entries(pages).forEach(([key, el]) => {
+    if (!el) return;
+    const isActive = key === tab;
+    el.classList.toggle("active", isActive);
+    el.classList.toggle("hidden", !isActive);
+  });
 }
 
 function togglePresentation() {
   document.body.classList.toggle("presentation-mode");
+}
+
+function exitPresentation() {
+  document.body.classList.remove("presentation-mode");
 }
 
 async function openMasterAccess() {

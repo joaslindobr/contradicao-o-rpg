@@ -13,6 +13,11 @@
   <!-- FUNDO -->
   <div class="background-texture"></div>
 
+  <!-- BOTÃO FLUTUANTE PARA SAIR DO MODO APRESENTAÇÃO -->
+  <button id="exitPresentationButton" class="exit-presentation-btn hidden" type="button">
+    ✕ SAIR DA APRESENTAÇÃO
+  </button>
+
   <!-- CABEÇALHO -->
   <header class="topbar">
     <div class="brand">
@@ -95,7 +100,7 @@
       </div>
     </div>
 
-    <!-- NAVEGAÇÃO ENTRE PÁGINAS -->
+    <!-- NAVEGAÇÃO ENTRE SESSÕES/PÁGINAS -->
     <nav class="sheet-tabs">
       <button class="sheet-tab active" data-tab="main" type="button">
         PERSONAGEM
@@ -103,6 +108,10 @@
 
       <button class="sheet-tab" data-tab="abilities" type="button">
         RITUAIS &amp; HABILIDADES
+      </button>
+
+      <button class="sheet-tab" data-tab="inventory" type="button">
+        INVENTÁRIO
       </button>
     </nav>
 
@@ -147,7 +156,7 @@
       <!-- LADO DIREITO: PÁGINAS -->
       <div class="sheet-right-content">
 
-        <!-- PÁGINA 1: ATRIBUTOS, DF, AFINIDADE, PV, PA E ARMA -->
+        <!-- PÁGINA 1: ATRIBUTOS, DF, AFINIDADE, DE:, PV, PA E ARMA -->
         <section id="mainSheetPage" class="sheet-page active">
           <div class="sheet-information">
 
@@ -188,7 +197,7 @@
                 </div>
               </div>
 
-              <!-- DF COM BOTÕES + E - E AFINIDADE EMBAIXO -->
+              <!-- DF COM BOTÕES + E -, AFINIDADE E CAMPO DE: EMBAIXO -->
               <div class="defense-column">
                 <h2 class="brush-heading">DF</h2>
                 <div class="defense-controls">
@@ -207,6 +216,16 @@
                     <option value="Paladar">Paladar</option>
                     <option value="Tato">Tato</option>
                   </select>
+                </div>
+
+                <div class="affinity-row de-row">
+                  <label for="characterDeWord" class="affinity-label">DE:</label>
+                  <input id="characterDeWord"
+                         type="text"
+                         maxlength="24"
+                         class="de-input"
+                         placeholder="Palavra..."
+                         aria-label="Campo DE">
                 </div>
               </div>
             </div>
@@ -324,6 +343,29 @@
               <div id="abilitiesList" class="entries-list"></div>
             </section>
 
+          </div>
+        </section>
+
+        <!-- PÁGINA 3: INVENTÁRIO -->
+        <section id="inventorySheetPage" class="sheet-page hidden">
+          <div class="inventory-big-block">
+            <div class="inventory-header">
+              <div>
+                <h2 class="brush-heading">INVENTÁRIO</h2>
+                <span id="inventoryCountLabel" class="limit-message">3 ITENS</span>
+              </div>
+
+              <div class="inventory-count-control">
+                <label for="inventoryItemCount">NÚMERO DE ITENS</label>
+                <div class="inventory-stepper">
+                  <button type="button" class="resource-button" onclick="changeInventoryCount(-1)">−</button>
+                  <input id="inventoryItemCount" type="number" min="0" max="50" value="3">
+                  <button type="button" class="resource-button" onclick="changeInventoryCount(1)">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="inventoryItemsGrid" class="inventory-items-grid"></div>
           </div>
         </section>
 
