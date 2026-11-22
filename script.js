@@ -800,8 +800,8 @@ function updateAttributeDice() {
 function updateDefense() {
   const character = getCurrentCharacter();
   const bonus = character && typeof character.dfBonus === "number" ? character.dfBonus : 0;
-  const dt = parseInt(document.getElementById("attributeDT").value, 10) || 1;
-  const defense = Math.max(0, 14 + Math.min(5, Math.max(1, dt)) + bonus);
+  const ag = Math.min(5, Math.max(1, parseInt(document.getElementById("attributeAG").value, 10) || 1));
+  const defense = Math.max(0, 14 + ag + bonus);
   document.getElementById("defenseValue").textContent = defense;
 }
 
